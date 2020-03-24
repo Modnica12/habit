@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#292929</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#1E1E1E</color>
+    <color name="addHabit">#020202</color>
+    <color name="colorPickerRed">#FF0000</color>
+    <color name="colorPickerYellow">#FFFF00</color>
+    <color name="colorPickerLime">#00FF00</color>
+    <color name="colorPickerCyan">#00FFFF</color>
+    <color name="colorPickerBlue">#0000FF</color>
+    <color name="colorPickerMagenta">#FF00FF</color>
+    <color name="background">#DCDCDC</color>
+</resources>

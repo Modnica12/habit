@@ -1,0 +1,14 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:drawable="@drawable/stroke_for_color_checked"
+        android:state_checked="true"
+        android:state_pressed="true" />
+    <item
+        android:drawable="@drawable/stroke_for_color"
+        android:state_pressed="true" />
+    <item
+        android:drawable="@drawable/stroke_for_color_checked"
+        android:state_checked="true" />
+    <item
+        android:drawable="@drawable/stroke_for_color" />
+</selector>
