@@ -1,36 +1,59 @@
-package com.example.habit
+package com.example.habit.fragments
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
-import kotlinx.android.synthetic.main.activity_data_input.*
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import androidx.fragment.app.FragmentManager
+import com.example.habit.*
+
+import kotlinx.android.synthetic.main.data_input_fragment.*
 import kotlinx.android.synthetic.main.habit_row.view.*
-import kotlin.math.abs
 
-const val ID_KEY = "ID"
-
-class DataInputActivity : AppCompatActivity() {
+class DataInputFragment : Fragment() {
 
     private val priorities = arrayOf(1, 2, 3, 4, 5)
-    private val habitIntent = Intent()
     private var type: Int = 0
     private var color: Int = 0
+    private var position: Int = -1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_data_input)
+    companion object {
+        fun newInstance() = DataInputFragment()
+    }
 
-        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, priorities)
+    private lateinit var viewModel: DataInputViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        val rootView = inflater.inflate(R.layout.data_input_fragment, container, false)
+
+
+
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val spinnerAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, priorities)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritiesSpinner.adapter = spinnerAdapter
 
-        val currentHabit = intent.getSerializableExtra(KEY_FOR_HABIT)
+
+        val currentHabit = arguments?.getSerializable(KEY_FOR_HABIT)
         if (currentHabit != null) {
             currentHabit as Habit
             enterName.setText(currentHabit.habitName.toString())
@@ -42,12 +65,20 @@ class DataInputActivity : AppCompatActivity() {
             if (currentHabit.type == 0)
                 badType.isChecked = true
             else goodType.isChecked = true
-            val id = intent.getIntExtra(ID_KEY, 0)
+            position = arguments!!.getInt(ID_KEY, -1)
             Log.d(LOG_DEBUG, id.toString())
-            habitIntent.putExtra(ID_KEY, id)
         }
 
+        val communicator = activity as Communicator
+
+        //communicator.communicate(HabitsListFragment as Fragment)
+
         setColors(48, 16)
+
+        typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            val checkedType: RadioButton = activity!!.findViewById(checkedId)
+            type = Integer.parseInt(checkedType.contentDescription.toString())
+        }
 
         confirmHabitButton.setOnClickListener {
             val habit = Habit(
@@ -58,21 +89,15 @@ class DataInputActivity : AppCompatActivity() {
                 type,
                 Integer.parseInt(enterQuantity.text.toString()),
                 Integer.parseInt(enterPeriod.text.toString()))
-            habitIntent.putExtra(KEY_FOR_HABIT, habit)
-            setResult(Activity.RESULT_OK, habitIntent)
-            finish()
+            communicator.passData2(habit, position)
         }
     }
 
-    fun onRadioButtonClicked(view: View){
-        if (goodType.isChecked) {
-            type = 1
-            Log.d(LOG_DEBUG, "1")
-        }
-        else if (badType.isChecked) {
-            type = 0
-            Log.d(LOG_DEBUG, "0")
-        }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(DataInputViewModel::class.java)
+        // TODO: Use the ViewModel
     }
 
     private fun setColors(size: Int, numberOfColors: Int){
@@ -81,16 +106,16 @@ class DataInputActivity : AppCompatActivity() {
         val diff = size + marginSize * 2
 
         colorPicker.setOnCheckedChangeListener { _, checkedId ->
-            val checked: RadioButton = findViewById(checkedId)
+            val checked: RadioButton = activity!!.findViewById(checkedId)
             color = Integer.parseInt(checked.contentDescription.toString())
         }
 
         for (i in 0 until numberOfColors){
-            val colorRadioButton = RadioButton(this)
+            val colorRadioButton = RadioButton(activity)
             val radioButtonLayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
             val marginInDp = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, marginSize.toFloat(), resources.displayMetrics).toInt()
+                TypedValue.COMPLEX_UNIT_DIP, marginSize.toFloat(), resources.displayMetrics).toInt()
             radioButtonLayoutParams.setMargins(marginInDp, 0, marginInDp, 0)
             colorRadioButton.layoutParams = radioButtonLayoutParams
 
@@ -123,4 +148,7 @@ class DataInputActivity : AppCompatActivity() {
         val ratio = number.toFloat() / (original.last - original.first)
         return (ratio * (target.last - target.first)).toInt()
     }
+
+
+
 }
