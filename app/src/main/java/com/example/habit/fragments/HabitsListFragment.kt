@@ -61,7 +61,6 @@ class HabitsListFragment : Fragment() {
                     habitsList[id] = habit as Habit
                 args.remove(KEY_FOR_HABIT)
             }
-
         }
     }
 
