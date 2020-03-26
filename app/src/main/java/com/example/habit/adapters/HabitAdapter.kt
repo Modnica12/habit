@@ -1,23 +1,28 @@
-package com.example.habit
+package com.example.habit.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.habit.Communicator
+import com.example.habit.Habit
+import com.example.habit.R
+import com.example.habit.fragments.LOG_DEBUG
 import kotlinx.android.synthetic.main.habit_row.view.*
 
 class HabitAdapter(private val habits: ArrayList<Habit>) :
     RecyclerView.Adapter<HabitViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
-        return HabitViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.habit_row, parent, false))
+        return HabitViewHolder(
+            LayoutInflater.from(
+                parent.context
+            ).inflate(R.layout.habit_row, parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -28,8 +33,10 @@ class HabitAdapter(private val habits: ArrayList<Habit>) :
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         //в listView нам бы пришлось создавать inflater (аналог holder)
         val habit = habits[position]
+        Log.d(LOG_DEBUG, "BAD")
         holder.bind(habit)
         holder.itemView.setOnClickListener {
+            Log.d(LOG_DEBUG, "clicked")
             val communicator = holder.itemView.context as Communicator
             communicator.passData(habit, position)
         }

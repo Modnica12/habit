@@ -1,33 +1,32 @@
 package com.example.habit
 
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.habit.fragments.DataInputFragment
-import com.example.habit.fragments.HabitsListFragment
-import com.example.habit.fragments.ID_KEY
-import com.example.habit.fragments.KEY_FOR_HABIT
+import android.view.MenuItem
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.*
+import androidx.viewpager.widget.ViewPager
+import com.example.habit.adapters.HabitsListViewPagerAdapter
+import com.example.habit.fragments.*
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), Communicator{
+class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigationItemSelectedListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val viewPager = findViewById<ViewPager>(R.id.habitsViewPager)
+        val adapter = HabitsListViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(GoodHabitsListFragment(), "good")
+        adapter.addFragment(BadHabitsListFragment(), "bad")
+
+        nav_view.setNavigationItemSelectedListener(this)
+
+        viewPager.adapter = adapter
+        habitsTabLayout.setupWithViewPager(viewPager)
     }
 
     override fun passData(habit: Habit, id: Int) {
@@ -40,21 +39,6 @@ class MainActivity : AppCompatActivity(), Communicator{
         secondFragment.arguments = bundle
 
         transaction.replace(R.id.mainActivity, secondFragment)
-        transaction.addToBackStack(null)
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-        transaction.commit()
-    }
-
-    override fun passData2(habit: Habit, id: Int) {
-        val bundle = Bundle()
-        bundle.putSerializable(KEY_FOR_HABIT, habit)
-        bundle.putInt(ID_KEY, id)
-
-        val transaction = this.supportFragmentManager.beginTransaction()
-        val secondFragment = HabitsListFragment()
-        secondFragment.arguments = bundle
-
-        transaction.replace(R.id.mainActivity, secondFragment)
 
         //добавить элементы в стек:
         // transaction.addToBackStack(null)
@@ -62,24 +46,42 @@ class MainActivity : AppCompatActivity(), Communicator{
         //удаляем предыдущие фаргменты:
         // this.supportFragmentManager.popBackStack()
 
+        transaction.addToBackStack(null)
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         transaction.commit()
     }
 
-    override fun startNewFragment() {
+    override fun startNewFragment(fragment: Fragment) {
         val transaction = this.supportFragmentManager.beginTransaction()
         val secondFragment = DataInputFragment()
 
-        transaction.replace(R.id.mainActivity, secondFragment)
+        transaction.replace(R.id.tabAndViewPager, fragment)
         transaction.addToBackStack(null)
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         transaction.commit()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        val communicator = this as Communicator
+
+        nav_view.bringToFront()
+        nav_view.requestLayout()
+
+        if (id == R.id.nav_home){
+            supportFragmentManager.popBackStack()
+            mainActivity.closeDrawer(GravityCompat.START)
+        }
+        else if (id == R.id.nav_about){
+            communicator.startNewFragment(AboutFragment())
+            mainActivity.closeDrawer(GravityCompat.START)
+        }
+        return true
     }
 
 }
 
 interface Communicator{
     fun passData(habit: Habit, id: Int)
-    fun passData2(habit: Habit, id: Int)
-    fun startNewFragment()
+    fun startNewFragment(fragment: Fragment)
 }

@@ -1,9 +1,8 @@
 package com.example.habit.fragments
 
 import android.app.Activity
-import android.content.Intent
+import android.content.Context
 import android.graphics.Color
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -11,14 +10,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import androidx.fragment.app.FragmentManager
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.habit.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.data_input_fragment.*
-import kotlinx.android.synthetic.main.habit_row.view.*
 
 class DataInputFragment : Fragment() {
 
@@ -37,11 +37,7 @@ class DataInputFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val rootView = inflater.inflate(R.layout.data_input_fragment, container, false)
-
-
-
         return rootView
     }
 
@@ -69,8 +65,6 @@ class DataInputFragment : Fragment() {
             Log.d(LOG_DEBUG, id.toString())
         }
 
-        val communicator = activity as Communicator
-
         //communicator.communicate(HabitsListFragment as Fragment)
 
         setColors(48, 16)
@@ -79,6 +73,7 @@ class DataInputFragment : Fragment() {
             val checkedType: RadioButton = activity!!.findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
         }
+
 
         confirmHabitButton.setOnClickListener {
             val habit = Habit(
@@ -89,15 +84,24 @@ class DataInputFragment : Fragment() {
                 type,
                 Integer.parseInt(enterQuantity.text.toString()),
                 Integer.parseInt(enterPeriod.text.toString()))
-            communicator.passData2(habit, position)
+            if (position == -1)
+                if (type == 1)
+                    GoodHabitsListFragment().addHabit(habit)
+                else BadHabitsListFragment().addHabit(habit)
+            else
+                if (type == 1)
+                    GoodHabitsListFragment().changeHabitListAt(position, habit)
+                else BadHabitsListFragment().changeHabitListAt(position, habit)
+            activity!!.supportFragmentManager.popBackStack()
+
+            val inputManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, InputMethodManager.SHOW_FORCED)
         }
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(DataInputViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     private fun setColors(size: Int, numberOfColors: Int){
@@ -136,12 +140,11 @@ class DataInputFragment : Fragment() {
 
     private fun getRGBColor(HSVPosition: Int): Int{
         val newHSV = convert(HSVPosition, 0..1151, 0..359)
-        val Hsv = FloatArray(3)
-        Hsv[0] = newHSV.toFloat()
-        Hsv[1] = 1f
-        Hsv[2] = 1f
-        val res = Color.HSVToColor(Hsv)
-        return res
+        val hsv = FloatArray(3)
+        hsv[0] = newHSV.toFloat()
+        hsv[1] = 1f
+        hsv[2] = 1f
+        return Color.HSVToColor(hsv)
     }
 
     private fun convert(number: Int, original: IntRange, target: IntRange): Int {

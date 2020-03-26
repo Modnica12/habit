@@ -1,40 +1,26 @@
 package com.example.habit.fragments
 
-import android.content.Intent
-import android.graphics.Color
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.example.habit.*
-
+import com.example.habit.Communicator
+import com.example.habit.Habit
+import com.example.habit.R
+import com.example.habit.adapters.HabitAdapter
 import kotlinx.android.synthetic.main.habits_list_fragment.*
 
+var badHabitsList = ArrayList<Habit>()
 
-const val LOG_DEBUG = "Debug"
-const val KEY_FOR_HABIT = "habit"
-const val KEY_FOR_SAVING_HABITS_LIST = "habits"
-const val ID_KEY = "ID"
-
-var habitsList = ArrayList<Habit>()
-
-class HabitsListFragment : Fragment() {
-
-    private val habitAdapter = HabitAdapter(habitsList)
+class BadHabitsListFragment : Fragment(){
+    private val habitAdapter = HabitAdapter(badHabitsList)
     lateinit var communicator: Communicator
-
-    companion object {
-        fun newInstance() = HabitsListFragment()
-    }
 
     private lateinit var viewModel: HabitsListViewModel
 
@@ -56,9 +42,9 @@ class HabitsListFragment : Fragment() {
                 Log.d(LOG_DEBUG, habit.toString())
                 val id = args.get(ID_KEY) as Int
                 if (id == -1)
-                    habitsList.add(habit as Habit)
+                   addHabit(habit as Habit)
                 else
-                    habitsList[id] = habit as Habit
+                    changeHabitListAt(id, habit as Habit)
                 args.remove(KEY_FOR_HABIT)
             }
         }
@@ -80,7 +66,7 @@ class HabitsListFragment : Fragment() {
         communicator = activity as Communicator
 
         addHabitButton.setOnClickListener {
-            communicator.startNewFragment()
+            communicator.startNewFragment(DataInputFragment())
         }
     }
 
@@ -89,4 +75,11 @@ class HabitsListFragment : Fragment() {
 
     }
 
+    fun addHabit(habit: Habit){
+        badHabitsList.add(habit)
+    }
+
+    fun changeHabitListAt(position: Int, habit: Habit){
+        badHabitsList[position] = habit
+    }
 }
