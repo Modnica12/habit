@@ -39,7 +39,6 @@ class BadHabitsListFragment : Fragment(){
         if (args != null) {
             val habit = args.get(KEY_FOR_HABIT)
             if (habit != null) {
-                Log.d(LOG_DEBUG, habit.toString())
                 val id = args.get(ID_KEY) as Int
                 if (id == -1)
                    addHabit(habit as Habit)

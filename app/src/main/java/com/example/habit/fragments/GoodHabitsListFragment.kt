@@ -45,7 +45,6 @@ class GoodHabitsListFragment : Fragment() {
         if (args != null) {
             val habit = args.get(KEY_FOR_HABIT)
             if (habit != null) {
-                Log.d(LOG_DEBUG, habit.toString())
                 val id = args.get(ID_KEY) as Int
                 if (id == -1)
                     goodHabitsList.add(habit as Habit)
@@ -86,6 +85,8 @@ class GoodHabitsListFragment : Fragment() {
     }
 
     fun changeHabitListAt(position: Int, habit: Habit){
+        Log.d(LOG_DEBUG, "CHANGED")
+        Log.d(LOG_DEBUG, habit.toString())
         goodHabitsList[position] = habit
     }
 

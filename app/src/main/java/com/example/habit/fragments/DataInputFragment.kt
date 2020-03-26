@@ -57,8 +57,9 @@ class DataInputFragment : Fragment() {
             prioritiesSpinner.setSelection(currentHabit.priority - 1)
             enterQuantity.setText(currentHabit.quantity.toString())
             enterPeriod.setText(currentHabit.period.toString())
+            type = currentHabit.type
             color = currentHabit.color
-            if (currentHabit.type == 0)
+            if (type == 0)
                 badType.isChecked = true
             else goodType.isChecked = true
             position = arguments!!.getInt(ID_KEY, -1)
@@ -72,6 +73,7 @@ class DataInputFragment : Fragment() {
         typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             val checkedType: RadioButton = activity!!.findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
+            Log.d(LOG_DEBUG, type.toString())
         }
 
 
@@ -84,10 +86,14 @@ class DataInputFragment : Fragment() {
                 type,
                 Integer.parseInt(enterQuantity.text.toString()),
                 Integer.parseInt(enterPeriod.text.toString()))
+            Log.d(LOG_DEBUG, habit.toString())
+
+            Log.d(LOG_DEBUG, position.toString())
             if (position == -1)
                 if (type == 1)
                     GoodHabitsListFragment().addHabit(habit)
-                else BadHabitsListFragment().addHabit(habit)
+                else
+                    BadHabitsListFragment().addHabit(habit)
             else
                 if (type == 1)
                     GoodHabitsListFragment().changeHabitListAt(position, habit)

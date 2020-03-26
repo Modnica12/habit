@@ -33,7 +33,6 @@ class HabitAdapter(private val habits: ArrayList<Habit>) :
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         //в listView нам бы пришлось создавать inflater (аналог holder)
         val habit = habits[position]
-        Log.d(LOG_DEBUG, "BAD")
         holder.bind(habit)
         holder.itemView.setOnClickListener {
             Log.d(LOG_DEBUG, "clicked")
