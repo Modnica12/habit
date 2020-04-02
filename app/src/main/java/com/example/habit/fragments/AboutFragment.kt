@@ -15,19 +15,11 @@ class AboutFragment : Fragment() {
         fun newInstance() = AboutFragment()
     }
 
-    private lateinit var viewModel: AboutViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.about_fragment, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(AboutViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

@@ -10,5 +10,5 @@
         android:id="@+id/dataInputFragment"
         android:name="com.example.habit.fragments.DataInputFragment"
         android:label="data_input_fragment"
-        tools:layout="@layout/data_input_fragment" />
+        tools:layout="@layout/data_input_fragment"/>
 </navigation>

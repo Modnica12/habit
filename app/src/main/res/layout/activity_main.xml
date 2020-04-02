@@ -7,29 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="false"
         android:id="@+id/tabAndViewPager">
 
-        <com.google.android.material.tabs.TabLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimary"
-            app:tabMode="fixed"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/background"
-            android:id="@+id/habitsTabLayout"
-            app:tabTextColor="@color/background">
-        </com.google.android.material.tabs.TabLayout>
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/habitsTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/colorPrimary"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@color/background"
+                app:tabMode="fixed"
+                app:tabTextColor="@color/background">
 
-        <androidx.viewpager.widget.ViewPager
-            android:layout_width="match_parent"
-            android:layout_marginTop="40dp"
-            android:layout_height="match_parent"
-            android:id="@+id/habitsViewPager">
-        </androidx.viewpager.widget.ViewPager>
-    </FrameLayout>
+            </com.google.android.material.tabs.TabLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/habitsViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="40dp">
+            </androidx.viewpager.widget.ViewPager>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addHabitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="42dp"
+                android:backgroundTint="@color/addHabit"
+                android:clickable="true"
+                android:focusable="true"
+                app:fabCustomSize="48dp"
+                app:srcCompat="@drawable/ic_add_habit" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

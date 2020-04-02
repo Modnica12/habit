@@ -3,26 +3,27 @@ package com.example.habit.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.example.habit.Habit
+import com.example.habit.fragments.HabitsListFragment
 
 class HabitsListViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
 
-    private val fragmentsList = ArrayList<Fragment>()
-    private val titlesList = ArrayList<String>()
-
-    fun addFragment(fragment: Fragment, title: String){
-        fragmentsList.add(fragment)
-        titlesList.add(title)
-    }
-
     override fun getItem(position: Int): Fragment {
-        return fragmentsList[position]
+        return if (position == 0) {
+            HabitsListFragment.newInstance(1)
+        } else {
+            HabitsListFragment.newInstance(0)
+        }
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        return titlesList[position]
+        return if (position == 0)
+            "good"
+        else
+            "bad"
     }
 
     override fun getCount(): Int {
-        return fragmentsList.size
+        return 2
     }
 }

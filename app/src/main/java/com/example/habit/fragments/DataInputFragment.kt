@@ -1,12 +1,10 @@
 package com.example.habit.fragments
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +12,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.DialogFragment
 import com.example.habit.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.data_input_fragment.*
+import kotlinx.android.synthetic.main.habits_list_fragment.*
 
-class DataInputFragment : Fragment() {
+class DataInputFragment : DialogFragment() {
 
     private val priorities = arrayOf(1, 2, 3, 4, 5)
     private var type: Int = 0
@@ -37,19 +36,21 @@ class DataInputFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.data_input_fragment, container, false)
-        return rootView
+        val view = inflater.inflate(R.layout.data_input_fragment, container, false)
+
+
+        //communicator.communicate(HabitsListFragment as Fragment)
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         val spinnerAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, priorities)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritiesSpinner.adapter = spinnerAdapter
 
-
         val currentHabit = arguments?.getSerializable(KEY_FOR_HABIT)
+
         if (currentHabit != null) {
             currentHabit as Habit
             enterName.setText(currentHabit.habitName.toString())
@@ -66,48 +67,19 @@ class DataInputFragment : Fragment() {
             Log.d(LOG_DEBUG, id.toString())
         }
 
-        //communicator.communicate(HabitsListFragment as Fragment)
-
-        setColors(48, 16)
-
         typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val checkedType: RadioButton = activity!!.findViewById(checkedId)
+            val checkedType: RadioButton = dialog!!.findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
             Log.d(LOG_DEBUG, type.toString())
         }
 
+        setColors(48, 16)
 
         confirmHabitButton.setOnClickListener {
-            val habit = Habit(
-                enterName.text.toString(),
-                enterDescription.text.toString(),
-                color,
-                prioritiesSpinner.selectedItem as Int,
-                type,
-                Integer.parseInt(enterQuantity.text.toString()),
-                Integer.parseInt(enterPeriod.text.toString()))
-            Log.d(LOG_DEBUG, habit.toString())
-
-            Log.d(LOG_DEBUG, position.toString())
-            if (position == -1)
-                if (type == 1)
-                    GoodHabitsListFragment().addHabit(habit)
-                else
-                    BadHabitsListFragment().addHabit(habit)
-            else
-                if (type == 1)
-                    GoodHabitsListFragment().changeHabitListAt(position, habit)
-                else BadHabitsListFragment().changeHabitListAt(position, habit)
-            activity!!.supportFragmentManager.popBackStack()
-
-            val inputManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, InputMethodManager.SHOW_FORCED)
+            packHabit()
         }
-    }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun setColors(size: Int, numberOfColors: Int){
@@ -116,7 +88,7 @@ class DataInputFragment : Fragment() {
         val diff = size + marginSize * 2
 
         colorPicker.setOnCheckedChangeListener { _, checkedId ->
-            val checked: RadioButton = activity!!.findViewById(checkedId)
+            val checked: RadioButton = dialog!!.findViewById(checkedId)
             color = Integer.parseInt(checked.contentDescription.toString())
         }
 
@@ -158,6 +130,34 @@ class DataInputFragment : Fragment() {
         return (ratio * (target.last - target.first)).toInt()
     }
 
+    fun packHabit(){
+        val currentName = enterName.text ?: ""
+        Log.d(LOG_DEBUG, enterName.text.toString())
+        val currentDesc = enterDescription.text ?: ""
+        var currentQuantity = enterQuantity.text.toString()
+        if (currentQuantity == ""){
+            currentQuantity = "0"
+        }
+        var currentPeriod = enterPeriod.text.toString()
+        if (currentPeriod == ""){
+            currentPeriod = "0"
+        }
+        val habit = Habit(
+            currentName.toString(),
+            currentDesc.toString(),
+            color,
+            prioritiesSpinner.selectedItem as Int,
+            type,
+            Integer.parseInt(currentQuantity),
+            Integer.parseInt(currentPeriod))
+        if (position == -1)
+            HabitsData.addHabit(habit)
+        else {
+            HabitsData.changeHabitListAt(position, habit)
+        }
+
+        dialog!!.dismiss()
+    }
 
 
 }
