@@ -23,10 +23,9 @@ const val KEY_FOR_SAVING_HABITS_LIST = "habits"
 const val KEY_FOR_SAVING_TYPE_FILTER = "typeFilter"
 const val ID_KEY = "ID"
 const val PASS_TYPE = "typeFilter"
+const val PASS_VIEWMODEL = "passViewModel"
 
 class HabitsListFragment : Fragment() {
-
-    private var habitsList = ArrayList<Habit>()
 
     private var typeFilterValue = 1
 
@@ -37,9 +36,10 @@ class HabitsListFragment : Fragment() {
 
     companion object{
         // чтобы не передавать аргументы в конструктор
-        fun newInstance(type: Int): HabitsListFragment{
+        fun newInstance(type: Int, viewModel: HabitsListViewModel): HabitsListFragment{
             val bundle = Bundle()
             bundle.putInt(PASS_TYPE, type)
+            bundle.putSerializable(PASS_VIEWMODEL, viewModel)
             val fragment = HabitsListFragment()
             fragment.arguments = bundle
             return fragment
@@ -53,7 +53,13 @@ class HabitsListFragment : Fragment() {
 
         Log.d(LOG_DEBUG, "onCreateView")
 
-        viewModel = ViewModelProviders.of(this).get(HabitsListViewModel::class.java)    
+        val args = arguments
+        if (args != null) {
+            // достаем аргументы из конструктора
+            typeFilterValue = args.getInt(PASS_TYPE, 0)
+            viewModel = args.get(PASS_VIEWMODEL) as HabitsListViewModel
+        }
+
         return inflater.inflate(R.layout.habits_list_fragment, container, false)
     }
 
@@ -61,19 +67,16 @@ class HabitsListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         Log.d(LOG_DEBUG, "onActivityCreated")
 
-        val args = arguments
-        if (args != null) {
-                // достаем аргументы из конструктора
-                typeFilterValue = args.getInt(PASS_TYPE, 0)
-            }
-
         Log.d(LOG_DEBUG, typeFilterValue.toString())
+
+        val habitsList = ArrayList<Habit>()
 
         habitAdapter = HabitAdapter(habitsList, typeFilterValue)
 
         listOfHabits.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = habitAdapter
+
             //разделитель для элементов списка
             val divider = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.habits_list_divider)
             val dividerItemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
@@ -84,10 +87,10 @@ class HabitsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getHabits().observe(viewLifecycleOwner, Observer { habits ->
-            habitsList = habits
-            Log.d(LOG_DEBUG, "OBSERVER " + habits.toString())
-            habitAdapter = HabitAdapter(habitsList, typeFilterValue)
+        viewModel.getFilteredHabits().observe(viewLifecycleOwner, Observer { habits ->
+            Log.d(LOG_DEBUG, "OBSERVER $typeFilterValue $habits")
+            habitAdapter.habitsList = habits
+            habitAdapter.notifyDataSetChanged()
             listOfHabits.layoutManager = LinearLayoutManager(activity)
             listOfHabits.adapter = habitAdapter
         })

@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_marginTop="64dp"
-    android:layout_marginBottom="64dp"
-    android:background="@drawable/list_element_shape">
+    android:background="@drawable/list_element_shape"
+    android:clickable="true"
+    android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context="com.example.habit.fragments.DataInputFragment">
 
@@ -20,8 +20,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:hint="Введите название привычки:"
-            android:inputType="textCapWords"
-            android:layout_marginTop="16dp"
+            android:inputType="textMultiLine"
+            android:layout_marginTop="64dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:background="@null"
@@ -171,7 +171,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:clickable="true"
             app:backgroundTint="@color/addHabit"
-            app:srcCompat="@drawable/ic_add_habit"
+            app:srcCompat="@drawable/confirm_habit"
             android:focusable="true"
             app:fabCustomSize="48dp"/>
 

@@ -13,13 +13,15 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.habit.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.data_input_fragment.*
 import kotlinx.android.synthetic.main.habits_list_fragment.*
 
-class DataInputFragment : DialogFragment() {
+class DataInputFragment : Fragment() {
 
     private val priorities = arrayOf(1, 2, 3, 4, 5)
     private var type: Int = 0
@@ -37,9 +39,7 @@ class DataInputFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.data_input_fragment, container, false)
-
-
-        //communicator.communicate(HabitsListFragment as Fragment)
+        viewModel = ViewModelProviders.of(this).get(DataInputViewModel::class.java)
 
         return view
     }
@@ -64,11 +64,13 @@ class DataInputFragment : DialogFragment() {
                 badType.isChecked = true
             else goodType.isChecked = true
             position = arguments!!.getInt(ID_KEY, -1)
-            Log.d(LOG_DEBUG, id.toString())
+
         }
 
+        viewModel.setCurrentPosition(position)
+
         typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val checkedType: RadioButton = dialog!!.findViewById(checkedId)
+            val checkedType: RadioButton = activity!!.findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
             Log.d(LOG_DEBUG, type.toString())
         }
@@ -88,7 +90,7 @@ class DataInputFragment : DialogFragment() {
         val diff = size + marginSize * 2
 
         colorPicker.setOnCheckedChangeListener { _, checkedId ->
-            val checked: RadioButton = dialog!!.findViewById(checkedId)
+            val checked: RadioButton = activity!!.findViewById(checkedId)
             color = Integer.parseInt(checked.contentDescription.toString())
         }
 
@@ -150,13 +152,12 @@ class DataInputFragment : DialogFragment() {
             type,
             Integer.parseInt(currentQuantity),
             Integer.parseInt(currentPeriod))
-        if (position == -1)
-            HabitsData.addHabit(habit)
-        else {
-            HabitsData.changeHabitListAt(position, habit)
-        }
 
-        dialog!!.dismiss()
+        Log.d(LOG_DEBUG, habit.toString())
+        viewModel.postCurrentHabit(habit)
+
+        Log.d(LOG_DEBUG, "Stack " + activity!!.supportFragmentManager.popBackStack())
+        //activity!!.supportFragmentManager.popBackStack()
     }
 
 

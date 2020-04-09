@@ -17,7 +17,7 @@ import com.example.habit.R
 import com.example.habit.fragments.LOG_DEBUG
 import kotlinx.android.synthetic.main.habit_row.view.*
 
-class HabitAdapter(private val habitsList: ArrayList<Habit>, private val typeFilterValue: Int) :
+class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue: Int) :
     RecyclerView.Adapter<HabitViewHolder>(){
 
     var filteredHabits = ArrayList<Habit>()
@@ -29,7 +29,6 @@ class HabitAdapter(private val habitsList: ArrayList<Habit>, private val typeFil
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
         filter()
-        Log.d(LOG_DEBUG, "createVH")
         return HabitViewHolder(
             LayoutInflater.from(
                 parent.context
@@ -45,9 +44,10 @@ class HabitAdapter(private val habitsList: ArrayList<Habit>, private val typeFil
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         filter()
-        Log.d(LOG_DEBUG, "Bind")
         //в listView нам бы пришлось создавать inflater (аналог holder)
         val habit = filteredHabits[position]
+
+        // достаем позицию в общем списке
         val listPosition = habitsList.indexOf(habit)
         holder.bind(habit)
         holder.itemView.setOnClickListener {

@@ -1,21 +1,76 @@
 package com.example.habit.fragments
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habit.Habit
 import com.example.habit.HabitsData
+import java.io.Serializable
 
-class HabitsListViewModel : ViewModel() {
+class HabitsListViewModel : ViewModel(), Serializable{
     private val mutableHabits: MutableLiveData<ArrayList<Habit>> = MutableLiveData()
-    val habits: LiveData<ArrayList<Habit>> = mutableHabits
+    private val filteredHabits: MutableLiveData<ArrayList<Habit>> = MutableLiveData()
+    private val stringForFilter: MutableLiveData<String> = MutableLiveData()
+    private val sortHabit: MutableLiveData<SortBy> = MutableLiveData()
+    private val sortType: MutableLiveData<Int> = MutableLiveData()
 
     init {
-        HabitsData.subscribe { habits -> mutableHabits.postValue(habits) }
+        //setSortHabit(SortBy.PRIORITY)
+        HabitsData.subscribe {
+                habits -> mutableHabits.value = habits
+                filter()
+                if (sortHabit.value != null)
+                    sort()
+        }
+        setStringForFilter("")
     }
 
-    fun getHabits(): MutableLiveData<ArrayList<Habit>>{
-        return mutableHabits
+    private fun getHabits() = mutableHabits
+
+    fun getFilteredHabits() = filteredHabits
+
+    fun setStringForFilter(filterString: String){
+        stringForFilter.value = filterString
+    }
+
+    fun setSortHabit(sort: SortBy) {
+        sortHabit.value = sort
+    }
+
+    fun setSortType(type: Int){
+        sortType.value = type
+    }
+
+    fun filter(){
+        // фильтруем список, если текст изменился
+        val list = getHabits().value
+        if (list!= null) {
+            filteredHabits.value =
+                list.filter { habit -> habit.habitName!!.contains(stringForFilter.value!!) } as ArrayList<Habit>
+        }
+    }
+
+    fun sort(){
+        val list = getFilteredHabits().value
+
+        if(list != null){
+            // компоратор, который в зависимости от enum'а будет сравнивать по какому-то из полей
+            // + либо берем по убыванию, либо по возрастанию
+            val comparator: Comparator<Habit> = if (sortType.value == SORT_FROM_SMALLEST)
+                when (sortHabit.value) {
+                    SortBy.PRIORITY -> compareBy { it.priority }
+                    else -> TODO()
+                }
+            else
+                when (sortHabit.value) {
+                    SortBy.PRIORITY -> compareByDescending { it.priority }
+                    else -> TODO()
+                }
+
+            // передаем компоратор, чтобы отсортировать список по нужному полю
+            val sorted = list.sortedWith(comparator)
+            filteredHabits.value = ArrayList(sorted)
+        }
     }
 
 }

@@ -2,19 +2,13 @@ package com.example.habit
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.*
-import androidx.viewpager.widget.ViewPager
-import com.example.habit.adapters.HabitsListViewPagerAdapter
 import com.example.habit.fragments.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_sheet.*
 
 class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigationItemSelectedListener{
 
@@ -25,41 +19,27 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 
         setContentView(R.layout.activity_main)
 
-        val viewPager = findViewById<ViewPager>(R.id.habitsViewPager)
-        val adapter = HabitsListViewPagerAdapter(supportFragmentManager)
-
         nav_view.setNavigationItemSelectedListener(this)
 
-        viewPager.adapter = adapter
-        habitsTabLayout.setupWithViewPager(viewPager)
-
-        addHabitButton.setOnClickListener {
-            //startNewFragment(DataInputFragment())
-            DataInputFragment().show(supportFragmentManager, "Create Habit")
-        }
-
-        /*val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })*/
+        // если только открыли приложение создаем вью пейджер
+        if (savedInstanceState == null)
+            addFragment(ListAndPagerFragment())
 
     }
 
     override fun passData(habit: Habit, id: Int) {
+        // создаем новый фрагмент и передаем в него данные
         val bundle = Bundle()
         bundle.putSerializable(KEY_FOR_HABIT, habit)
         bundle.putInt(ID_KEY, id)
 
+        val transaction = this.supportFragmentManager.beginTransaction()
         val secondFragment = DataInputFragment()
         secondFragment.arguments = bundle
-        secondFragment.show(supportFragmentManager, "Change Habit")
+
+        transaction.add(R.id.fragment_container, secondFragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
 
         //добавить элементы в стек:
         // transaction.addToBackStack(null)
@@ -70,14 +50,25 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
     }
 
     override fun startNewFragment(fragment: Fragment) {
+        // создаем новыйй фрагмент
         val transaction = this.supportFragmentManager.beginTransaction()
 
-        transaction.replace(R.id.tabAndViewPager, fragment)
+        transaction.add(R.id.fragment_container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
 
+    override fun addFragment(fragment: Fragment) {
+        // добавляем фрагмент
+        val transaction = this.supportFragmentManager.beginTransaction()
+
+        transaction.add(R.id.fragment_container, fragment)
+        transaction.commit()
+    }
+
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // обработка дровера
         val id = item.itemId
         val communicator = this as Communicator
 
@@ -100,4 +91,5 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 interface Communicator{
     fun passData(habit: Habit, id: Int)
     fun startNewFragment(fragment: Fragment)
+    fun addFragment(fragment: Fragment)
 }
