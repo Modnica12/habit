@@ -87,9 +87,29 @@ class HabitsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.getFilteredHabits().observe(viewLifecycleOwner, Observer { habits ->
-            Log.d(LOG_DEBUG, "OBSERVER $typeFilterValue $habits")
             habitAdapter.habitsList = habits
+            habitAdapter.notifyDataSetChanged()
+            listOfHabits.layoutManager = LinearLayoutManager(activity)
+            listOfHabits.adapter = habitAdapter
+        })
+
+        val habitsLiveData = HabitApp.instance.getDataBase().habitsDao().getAllHabits()
+        habitsLiveData.observe(viewLifecycleOwner, Observer { habits ->
+
+            //val dataBase = HabitApp.instance.getDataBase().habitsDao()
+            //habits.forEach { habit -> dataBase.deleteHabit(habit) }
+
+            HabitApp.dataBaseSize = habits.size
+            viewModel.setHabits(ArrayList(habits))
+            viewModel.filter()
+            viewModel.sort()
+
+            val filtered = viewModel.getFilteredHabits().value
+            if (filtered != null)
+                habitAdapter.habitsList = ArrayList(filtered)
+
             habitAdapter.notifyDataSetChanged()
             listOfHabits.layoutManager = LinearLayoutManager(activity)
             listOfHabits.adapter = habitAdapter

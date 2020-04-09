@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habit.Habit
-import com.example.habit.HabitsData
+import com.example.habit.HabitApp
 
 class DataInputViewModel : ViewModel() {
     private val mutableCurrentHabit: MutableLiveData<Habit> = MutableLiveData()
-    private var currentPosition = 0
 
     init {
 
@@ -16,17 +15,20 @@ class DataInputViewModel : ViewModel() {
 
     fun postCurrentHabit(habit: Habit){
         mutableCurrentHabit.value = habit
-        Log.d(LOG_DEBUG, currentPosition.toString())
-        Log.d(LOG_DEBUG, habit.toString())
+        // берем позицию привычки
+        val currentPosition = habit.habitId
+        val dataBase = HabitApp.instance.getDataBase().habitsDao()
+
+        // если новая, то присваиваем позицию и добавляем в конец
         if (currentPosition == -1){
-            HabitsData.addHabit(mutableCurrentHabit.value!!)
+            val size = HabitApp.dataBaseSize
+            habit.habitId = size
+            mutableCurrentHabit.value = habit
+            dataBase.addHabit(mutableCurrentHabit.value!!)
         }
-        else
-            HabitsData.changeHabitListAt(currentPosition, mutableCurrentHabit.value!!)
+        else // если изменяем существующую
+            dataBase.updateHabit(mutableCurrentHabit.value!!)
     }
 
-    fun setCurrentPosition(position: Int){
-        currentPosition = position
-    }
 
 }

@@ -1,33 +1,26 @@
 package com.example.habit
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.example.habit.fragments.LOG_DEBUG
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 typealias subscriber = (ArrayList<Habit>) -> Unit
 
-object HabitsData{
-    private val habitsList = ArrayList<Habit>()
-    private val subscribers = ArrayList<subscriber>()
+@Dao
+interface HabitsDao {
+    @Query("SELECT * FROM habits")
+    fun getAllHabits(): LiveData<List<Habit>>
 
+    @Insert
+    fun addHabit(habit: Habit)
 
-    fun addHabit(habit: Habit){
+    @Update
+    fun updateHabit(habit: Habit)
 
-        Log.d(LOG_DEBUG, "ADDED")
-        habitsList.add(habit)
-        subscribers.forEach{
-            it(habitsList)
-        }
-    }
+    @Delete
+    fun deleteHabit(habit: Habit)
+}
 
-    fun changeHabitListAt(position: Int, habit: Habit){
-        habitsList[position] = habit
-        subscribers.forEach{
-            it(habitsList)
-        }
-    }
-
-    fun subscribe(action: subscriber){
-        subscribers.add(action)
-    }
+@Database(entities = [Habit::class], version = 1)
+abstract class AppDataBase: RoomDatabase(){
+    abstract fun habitsDao(): HabitsDao
 }

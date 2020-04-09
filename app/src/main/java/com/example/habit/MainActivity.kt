@@ -27,11 +27,10 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 
     }
 
-    override fun passData(habit: Habit, id: Int) {
+    override fun passData(habit: Habit) {
         // создаем новый фрагмент и передаем в него данные
         val bundle = Bundle()
         bundle.putSerializable(KEY_FOR_HABIT, habit)
-        bundle.putInt(ID_KEY, id)
 
         val transaction = this.supportFragmentManager.beginTransaction()
         val secondFragment = DataInputFragment()
@@ -89,7 +88,7 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 }
 
 interface Communicator{
-    fun passData(habit: Habit, id: Int)
+    fun passData(habit: Habit)
     fun startNewFragment(fragment: Fragment)
     fun addFragment(fragment: Fragment)
 }

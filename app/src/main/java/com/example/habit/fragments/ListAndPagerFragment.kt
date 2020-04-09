@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.example.habit.Communicator
+import com.example.habit.HabitApp
 
 import com.example.habit.R
 import com.example.habit.adapters.HabitsListViewPagerAdapter
@@ -50,11 +51,17 @@ class ListAndPagerFragment : Fragment() {
         habitsTabLayout.setupWithViewPager(habitsViewPager)
 
 
+        val dataBase = HabitApp.instance.getDataBase().habitsDao()
+
+        dataBase.getAllHabits().value?.forEach { habit -> dataBase.deleteHabit(habit) }
+
+
         // создаем bottomSheet
         val transaction = activity!!.supportFragmentManager.beginTransaction()
 
         transaction.add(R.id.bottomContentContainer, BottomSheetFragment.newInstance(viewModel))
         transaction.commit()
+
 
     }
 

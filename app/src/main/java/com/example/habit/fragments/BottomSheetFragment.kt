@@ -1,6 +1,5 @@
 package com.example.habit.fragments
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.transition.Fade
 import android.util.Log
@@ -11,12 +10,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import com.example.habit.Communicator
-import com.example.habit.Habit
 
 import com.example.habit.R
-import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import kotlinx.android.synthetic.main.bottom_sheet_fragment_content.*
-import java.io.Serializable
 
 
 // типы сортировки(по убыванию, по возростанию)
@@ -104,7 +100,7 @@ class BottomSheetFragment : Fragment(){
         buttonFromSmallest.setOnClickListener {
             val sortType = sortSpinner.selectedItem as String
             val enum = mapForSort[sortType]
-            viewModel.setSortHabit(enum!!)
+            viewModel.setSortBy(enum!!)
             viewModel.setSortType(SORT_FROM_SMALLEST)
             viewModel.sort()
         }
@@ -113,7 +109,7 @@ class BottomSheetFragment : Fragment(){
         buttonFromBiggest.setOnClickListener {
             val sortType = sortSpinner.selectedItem as String
             val enum = mapForSort[sortType]
-            viewModel.setSortHabit(enum!!)
+            viewModel.setSortBy(enum!!)
             viewModel.setSortType(SORT_FROM_BIGGEST)
             viewModel.sort()
         }

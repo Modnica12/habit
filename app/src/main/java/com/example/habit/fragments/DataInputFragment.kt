@@ -63,11 +63,9 @@ class DataInputFragment : Fragment() {
             if (type == 0)
                 badType.isChecked = true
             else goodType.isChecked = true
-            position = arguments!!.getInt(ID_KEY, -1)
+            position = currentHabit.habitId
 
         }
-
-        viewModel.setCurrentPosition(position)
 
         typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             val checkedType: RadioButton = activity!!.findViewById(checkedId)
@@ -145,6 +143,7 @@ class DataInputFragment : Fragment() {
             currentPeriod = "0"
         }
         val habit = Habit(
+            position,
             currentName.toString(),
             currentDesc.toString(),
             color,

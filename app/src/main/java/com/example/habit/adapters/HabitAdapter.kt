@@ -1,20 +1,15 @@
 package com.example.habit.adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habit.Communicator
 import com.example.habit.Habit
-import com.example.habit.HabitsData
 import com.example.habit.R
-import com.example.habit.fragments.LOG_DEBUG
 import kotlinx.android.synthetic.main.habit_row.view.*
 
 class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue: Int) :
@@ -22,7 +17,7 @@ class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue
 
     var filteredHabits = ArrayList<Habit>()
 
-    fun filter(){
+    private fun filter(){
         val badHabits= habitsList.filter { habit: Habit -> habit.type == typeFilterValue } as ArrayList<Habit>
         filteredHabits = badHabits
     }
@@ -47,12 +42,10 @@ class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue
         //в listView нам бы пришлось создавать inflater (аналог holder)
         val habit = filteredHabits[position]
 
-        // достаем позицию в общем списке
-        val listPosition = habitsList.indexOf(habit)
         holder.bind(habit)
         holder.itemView.setOnClickListener {
             val communicator = holder.itemView.context as Communicator
-            communicator.passData(habit, listPosition)
+            communicator.passData(habit)
         }
     }
 

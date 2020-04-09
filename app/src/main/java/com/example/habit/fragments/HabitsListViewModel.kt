@@ -1,43 +1,41 @@
 package com.example.habit.fragments
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habit.Habit
-import com.example.habit.HabitsData
 import java.io.Serializable
 
 class HabitsListViewModel : ViewModel(), Serializable{
     private val mutableHabits: MutableLiveData<ArrayList<Habit>> = MutableLiveData()
     private val filteredHabits: MutableLiveData<ArrayList<Habit>> = MutableLiveData()
     private val stringForFilter: MutableLiveData<String> = MutableLiveData()
-    private val sortHabit: MutableLiveData<SortBy> = MutableLiveData()
+    private val sortBy: MutableLiveData<SortBy> = MutableLiveData()
     private val sortType: MutableLiveData<Int> = MutableLiveData()
 
     init {
-        //setSortHabit(SortBy.PRIORITY)
-        HabitsData.subscribe {
-                habits -> mutableHabits.value = habits
-                filter()
-                if (sortHabit.value != null)
-                    sort()
-        }
         setStringForFilter("")
     }
 
     private fun getHabits() = mutableHabits
 
+    fun setHabits(habits: ArrayList<Habit>){
+        mutableHabits.value = habits
+    }
+
     fun getFilteredHabits() = filteredHabits
 
     fun setStringForFilter(filterString: String){
+        // строка для фильтрации списка
         stringForFilter.value = filterString
     }
 
-    fun setSortHabit(sort: SortBy) {
-        sortHabit.value = sort
+    fun setSortBy(sort: SortBy) {
+        // по чему сортируем
+        sortBy.value = sort
     }
 
     fun setSortType(type: Int){
+        // по возростанию / убыванию
         sortType.value = type
     }
 
@@ -57,14 +55,14 @@ class HabitsListViewModel : ViewModel(), Serializable{
             // компоратор, который в зависимости от enum'а будет сравнивать по какому-то из полей
             // + либо берем по убыванию, либо по возрастанию
             val comparator: Comparator<Habit> = if (sortType.value == SORT_FROM_SMALLEST)
-                when (sortHabit.value) {
+                when (sortBy.value) {
                     SortBy.PRIORITY -> compareBy { it.priority }
                     else -> TODO()
                 }
             else
-                when (sortHabit.value) {
+                when (sortBy.value) {
                     SortBy.PRIORITY -> compareByDescending { it.priority }
-                    else -> TODO()
+                    else -> compareByDescending { it.priority }
                 }
 
             // передаем компоратор, чтобы отсортировать список по нужному полю
