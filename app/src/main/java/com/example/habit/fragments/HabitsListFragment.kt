@@ -105,14 +105,6 @@ class HabitsListFragment : Fragment() {
             viewModel.setHabits(ArrayList(habits))
             viewModel.filter()
             viewModel.sort()
-
-            val filtered = viewModel.getFilteredHabits().value
-            if (filtered != null)
-                habitAdapter.habitsList = ArrayList(filtered)
-
-            habitAdapter.notifyDataSetChanged()
-            listOfHabits.layoutManager = LinearLayoutManager(activity)
-            listOfHabits.adapter = habitAdapter
         })
     }
 
