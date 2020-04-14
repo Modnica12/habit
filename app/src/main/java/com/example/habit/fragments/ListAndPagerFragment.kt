@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.example.habit.Communicator
 import com.example.habit.HabitApp
@@ -40,29 +41,18 @@ class ListAndPagerFragment : Fragment() {
         // TODO: Use the ViewModel
         Log.d(LOG_DEBUG, "PAger ActivityCreated")
 
-        val viewModel  = ViewModelProviders.of(this).get(HabitsListViewModel::class.java)
-
-
         // создаем адаптер для viewPager с 2 списками
-        val adapter = HabitsListViewPagerAdapter(activity!!.supportFragmentManager, viewModel)
+        val adapter = HabitsListViewPagerAdapter(activity!!.supportFragmentManager)
 
         habitsViewPager.adapter = adapter
         // добавляем pager к tab
         habitsTabLayout.setupWithViewPager(habitsViewPager)
 
-
-        val dataBase = HabitApp.instance.getDataBase().habitsDao()
-
-        dataBase.getAllHabits().value?.forEach { habit -> dataBase.deleteHabit(habit) }
-
-
         // создаем bottomSheet
         val transaction = activity!!.supportFragmentManager.beginTransaction()
 
-        transaction.add(R.id.bottomContentContainer, BottomSheetFragment.newInstance(viewModel))
+        transaction.add(R.id.bottomContentContainer, BottomSheetFragment())
         transaction.commit()
-
-
     }
 
 }

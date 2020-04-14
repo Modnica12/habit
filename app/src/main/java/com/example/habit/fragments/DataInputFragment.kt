@@ -1,6 +1,5 @@
 package com.example.habit.fragments
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -8,18 +7,16 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.habit.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.data_input_fragment.*
-import kotlinx.android.synthetic.main.habits_list_fragment.*
 
 class DataInputFragment : Fragment() {
 
@@ -39,7 +36,7 @@ class DataInputFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.data_input_fragment, container, false)
-        viewModel = ViewModelProviders.of(this).get(DataInputViewModel::class.java)
+        viewModel = activity?.let { ViewModelProvider(it).get(DataInputViewModel::class.java)}!!
 
         return view
     }
@@ -49,25 +46,27 @@ class DataInputFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritiesSpinner.adapter = spinnerAdapter
 
-        val currentHabit = arguments?.getSerializable(KEY_FOR_HABIT)
+        val currentHabitId = arguments?.getInt(KEY_FOR_HABIT)
 
-        if (currentHabit != null) {
-            currentHabit as Habit
-            enterName.setText(currentHabit.habitName.toString())
-            enterDescription.setText(currentHabit.description.toString())
-            prioritiesSpinner.setSelection(currentHabit.priority - 1)
-            enterQuantity.setText(currentHabit.quantity.toString())
-            enterPeriod.setText(currentHabit.period.toString())
-            type = currentHabit.type
-            color = currentHabit.color
-            if (type == 0)
-                badType.isChecked = true
-            else goodType.isChecked = true
-            position = currentHabit.habitId
-
+        if (currentHabitId != null) {
+            // получить из бд
+            viewModel.getHabitById(currentHabitId)
+                .observe(viewLifecycleOwner, Observer { habit ->
+                    enterName.setText(habit.habitName.toString())
+                    enterDescription.setText(habit.description.toString())
+                    prioritiesSpinner.setSelection(habit.priority - 1)
+                    enterQuantity.setText(habit.quantity.toString())
+                    enterPeriod.setText(habit.period.toString())
+                    type = habit.type
+                    color = habit.color
+                    if (type == 0)
+                        badType.isChecked = true
+                    else goodType.isChecked = true
+                    position = currentHabitId
+                })
         }
 
-        typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+        typeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             val checkedType: RadioButton = activity!!.findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
             Log.d(LOG_DEBUG, type.toString())
@@ -130,7 +129,7 @@ class DataInputFragment : Fragment() {
         return (ratio * (target.last - target.first)).toInt()
     }
 
-    fun packHabit(){
+    private fun packHabit(){
         val currentName = enterName.text ?: ""
         Log.d(LOG_DEBUG, enterName.text.toString())
         val currentDesc = enterDescription.text ?: ""
@@ -155,8 +154,7 @@ class DataInputFragment : Fragment() {
         Log.d(LOG_DEBUG, habit.toString())
         viewModel.postCurrentHabit(habit)
 
-        Log.d(LOG_DEBUG, "Stack " + activity!!.supportFragmentManager.popBackStack())
-        //activity!!.supportFragmentManager.popBackStack()
+        activity!!.supportFragmentManager.popBackStack()
     }
 
 

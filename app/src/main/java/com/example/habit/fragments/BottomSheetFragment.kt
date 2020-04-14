@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
 import com.example.habit.Communicator
 
 import com.example.habit.R
@@ -30,14 +31,6 @@ private val mapForSort = mapOf(sortByPriorities to SortBy.PRIORITY)
 class BottomSheetFragment : Fragment(){
 
     companion object {
-        fun newInstance(viewModel: HabitsListViewModel): BottomSheetFragment {
-            // передаем аргкменты
-            val fragment = BottomSheetFragment()
-            val bundle = Bundle()
-            bundle.putSerializable(PASS_VIEWMODEL, viewModel)
-            fragment.arguments = bundle
-            return fragment
-        }
     }
 
     private lateinit var viewModel: HabitsListViewModel
@@ -60,10 +53,7 @@ class BottomSheetFragment : Fragment(){
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // достаем аргументы
-        val args = arguments
-        if (args != null)
-            viewModel = args.get(PASS_VIEWMODEL) as HabitsListViewModel
+        viewModel = activity?.let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}!!
 
         // обрабатываем нажатие на кнопку создания привычки
         addHabitButton.setOnClickListener {

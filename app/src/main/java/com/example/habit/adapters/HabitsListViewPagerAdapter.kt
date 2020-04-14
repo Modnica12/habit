@@ -9,14 +9,14 @@ import com.example.habit.fragments.HabitsListFragment
 import com.example.habit.fragments.HabitsListViewModel
 import com.example.habit.fragments.LOG_DEBUG
 
-class HabitsListViewPagerAdapter(fm: FragmentManager, private val viewModel: HabitsListViewModel) : FragmentPagerAdapter(fm){
+class HabitsListViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
 
     override fun getItem(position: Int): Fragment {
         Log.d(LOG_DEBUG, "LISTS")
         return if (position == 0) {
-            HabitsListFragment.newInstance(1, viewModel)
+            HabitsListFragment.newInstance(1)
         } else {
-            HabitsListFragment.newInstance(0, viewModel)
+            HabitsListFragment.newInstance(0)
         }
     }
 

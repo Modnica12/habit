@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habit.*
@@ -19,11 +20,8 @@ import kotlinx.android.synthetic.main.habits_list_fragment.*
 
 const val LOG_DEBUG = "Debug"
 const val KEY_FOR_HABIT = "habit"
-const val KEY_FOR_SAVING_HABITS_LIST = "habits"
 const val KEY_FOR_SAVING_TYPE_FILTER = "typeFilter"
-const val ID_KEY = "ID"
 const val PASS_TYPE = "typeFilter"
-const val PASS_VIEWMODEL = "passViewModel"
 
 class HabitsListFragment : Fragment() {
 
@@ -36,10 +34,9 @@ class HabitsListFragment : Fragment() {
 
     companion object{
         // чтобы не передавать аргументы в конструктор
-        fun newInstance(type: Int, viewModel: HabitsListViewModel): HabitsListFragment{
+        fun newInstance(type: Int): HabitsListFragment{
             val bundle = Bundle()
             bundle.putInt(PASS_TYPE, type)
-            bundle.putSerializable(PASS_VIEWMODEL, viewModel)
             val fragment = HabitsListFragment()
             fragment.arguments = bundle
             return fragment
@@ -52,12 +49,12 @@ class HabitsListFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
 
         Log.d(LOG_DEBUG, "onCreateView")
+        viewModel = activity?.let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}!!
 
         val args = arguments
         if (args != null) {
             // достаем аргументы из конструктора
             typeFilterValue = args.getInt(PASS_TYPE, 0)
-            viewModel = args.get(PASS_VIEWMODEL) as HabitsListViewModel
         }
 
         return inflater.inflate(R.layout.habits_list_fragment, container, false)
@@ -88,13 +85,6 @@ class HabitsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getFilteredHabits().observe(viewLifecycleOwner, Observer { habits ->
-            habitAdapter.habitsList = habits
-            habitAdapter.notifyDataSetChanged()
-            listOfHabits.layoutManager = LinearLayoutManager(activity)
-            listOfHabits.adapter = habitAdapter
-        })
-
         val habitsLiveData = HabitApp.instance.getDataBase().habitsDao().getAllHabits()
         habitsLiveData.observe(viewLifecycleOwner, Observer { habits ->
 
@@ -105,6 +95,14 @@ class HabitsListFragment : Fragment() {
             viewModel.setHabits(ArrayList(habits))
             viewModel.filter()
             viewModel.sort()
+        })
+
+
+        viewModel.getFilteredHabits().observe(viewLifecycleOwner, Observer { habits ->
+            habitAdapter.habitsList = habits
+            habitAdapter.notifyDataSetChanged()
+            listOfHabits.layoutManager = LinearLayoutManager(activity)
+            listOfHabits.adapter = habitAdapter
         })
     }
 

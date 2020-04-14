@@ -18,6 +18,9 @@ interface HabitsDao {
 
     @Delete
     fun deleteHabit(habit: Habit)
+
+    @Query("SELECT * FROM habits WHERE habitId=:id ")
+    fun getBy(id: Int): LiveData<Habit>
 }
 
 @Database(entities = [Habit::class], version = 1)
