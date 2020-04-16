@@ -6,17 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habit.Habit
 import com.example.habit.HabitApp
+import com.example.habit.HabitsData
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class DataInputViewModel : ViewModel() {
-    private val mutableCurrentHabit: MutableLiveData<Habit> = MutableLiveData()
-    private val dataBase = HabitApp.instance.getDataBase().habitsDao()
+class DataInputViewModel : ViewModel(), CoroutineScope {
 
-    init {
+    private val job = SupervisorJob()
 
-    }
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job + CoroutineExceptionHandler { _, throwable -> throw throwable }
 
-    fun postCurrentHabit(habit: Habit){
-        mutableCurrentHabit.value = habit
+    private fun postHabit(habit: Habit){
         // берем позицию привычки
         val currentPosition = habit.habitId
 
@@ -24,15 +25,27 @@ class DataInputViewModel : ViewModel() {
         if (currentPosition == -1){
             val size = HabitApp.dataBaseSize
             habit.habitId = size
-            mutableCurrentHabit.value = habit
-            dataBase.addHabit(mutableCurrentHabit.value!!)
+            HabitsData.addHabit(habit)
         }
         else // если изменяем существующую
-            dataBase.updateHabit(mutableCurrentHabit.value!!)
+            HabitsData.updateHabit(habit)
+    }
+
+    fun postCurrentHabit(habit: Habit){
+        launch {
+            withContext(Dispatchers.IO){
+                postHabit(habit)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        coroutineContext.cancelChildren()
     }
 
     fun getHabitById(id: Int): LiveData<Habit>{
-        val habit = dataBase.getBy(id)
+        val habit = HabitsData.getBy(id)
         Log.d(LOG_DEBUG, "getbyid " + habit.value)
         return habit
     }

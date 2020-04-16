@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.habit.Communicator
 
 import com.example.habit.R
+import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import kotlinx.android.synthetic.main.bottom_sheet_fragment_content.*
 
 

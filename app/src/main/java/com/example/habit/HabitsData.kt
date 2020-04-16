@@ -27,3 +27,28 @@ interface HabitsDao {
 abstract class AppDataBase: RoomDatabase(){
     abstract fun habitsDao(): HabitsDao
 }
+
+object HabitsData {
+
+    private val dataBase = HabitApp.instance.getDataBase().habitsDao()
+
+    fun addHabit(habit: Habit){
+        dataBase.addHabit(habit)
+    }
+
+    fun getAllHabits(): LiveData<List<Habit>> {
+        return dataBase.getAllHabits()
+    }
+
+    fun getBy(id: Int): LiveData<Habit>{
+        return dataBase.getBy(id)
+    }
+
+    fun deleteHabit(habit: Habit){
+        dataBase.deleteHabit(habit)
+    }
+
+    fun updateHabit(habit: Habit){
+        dataBase.updateHabit(habit)
+    }
+}

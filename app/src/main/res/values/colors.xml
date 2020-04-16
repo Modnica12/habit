@@ -11,4 +11,5 @@
     <color name="colorPickerBlue">#0000FF</color>
     <color name="colorPickerMagenta">#FF00FF</color>
     <color name="background">#DCDCDC</color>
+    <color name="searchBackground">#A5A5A5</color>
 </resources>

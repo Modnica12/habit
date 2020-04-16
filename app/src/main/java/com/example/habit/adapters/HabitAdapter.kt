@@ -45,7 +45,7 @@ class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue
         holder.bind(habit)
         holder.itemView.setOnClickListener {
             val communicator = holder.itemView.context as Communicator
-            communicator.passData(habit.habitId)
+            communicator.passDataInDataInputFragment(habit.habitId)
         }
     }
 

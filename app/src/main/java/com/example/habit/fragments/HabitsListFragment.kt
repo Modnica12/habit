@@ -49,7 +49,8 @@ class HabitsListFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
 
         Log.d(LOG_DEBUG, "onCreateView")
-        viewModel = activity?.let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}!!
+        viewModel = activity!!.let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}
+
 
         val args = arguments
         if (args != null) {

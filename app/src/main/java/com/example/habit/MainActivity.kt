@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 
     }
 
-    override fun passData(id: Int) {
+    override fun passDataInDataInputFragment(id: Int) {
         // создаем новый фрагмент и передаем в него данные
         val bundle = Bundle()
         bundle.putInt(KEY_FOR_HABIT, id)
@@ -39,12 +39,6 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
         transaction.add(R.id.fragment_container, secondFragment)
         transaction.addToBackStack(null)
         transaction.commit()
-
-        //добавить элементы в стек:
-        // transaction.addToBackStack(null)
-
-        //удаляем предыдущие фаргменты:
-        // this.supportFragmentManager.popBackStack()
 
     }
 
@@ -88,7 +82,7 @@ class MainActivity : AppCompatActivity(), Communicator, NavigationView.OnNavigat
 }
 
 interface Communicator{
-    fun passData(id: Int)
+    fun passDataInDataInputFragment(id: Int)
     fun startNewFragment(fragment: Fragment)
     fun addFragment(fragment: Fragment)
 }

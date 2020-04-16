@@ -165,15 +165,15 @@
             android:id="@+id/confirmHabitButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="42dp"
+            android:layout_marginBottom="50dp"
+            android:layout_marginEnd="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:clickable="true"
             app:backgroundTint="@color/addHabit"
             app:srcCompat="@drawable/confirm_habit"
             android:focusable="true"
-            app:fabCustomSize="48dp"/>
+            app:fabCustomSize="64dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
