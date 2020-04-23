@@ -10,21 +10,20 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import androidx.databinding.DataBindingUtil
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.example.habit.*
 
 import kotlinx.android.synthetic.main.data_input_fragment.*
 
 class DataInputFragment : Fragment() {
 
-    private val priorities = arrayOf(1, 2, 3, 4, 5)
+    private val priorities = arrayOf(0, 1, 2)
     private var type: Int = 0
     private var color: Int = 0
-    private var position: Int = -1
+    private var uid: String = ""
 
     companion object {
         fun newInstance() = DataInputFragment()
@@ -42,32 +41,33 @@ class DataInputFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val spinnerAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, priorities)
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritiesSpinner.adapter = spinnerAdapter
 
-        val currentHabitId = arguments?.getInt(KEY_FOR_HABIT)
+        val currentHabitId = arguments?.getString(KEY_FOR_HABIT)
 
         if (currentHabitId != null) {
             // получить из бд
             viewModel.getHabitById(currentHabitId)
                 .observe(viewLifecycleOwner, Observer { habit ->
-                    enterName.setText(habit.habitName.toString())
+                    Log.d(LOG_DEBUG, "Habit in datainput $habit")
+                    enterName.setText(habit.title.toString())
                     enterDescription.setText(habit.description.toString())
-                    prioritiesSpinner.setSelection(habit.priority - 1)
-                    enterQuantity.setText(habit.quantity.toString())
-                    enterPeriod.setText(habit.period.toString())
+                    prioritiesSpinner.setSelection(habit.priority)
+                    enterQuantity.setText(habit.count.toString())
+                    enterPeriod.setText(habit.frequency.toString())
                     type = habit.type
                     color = habit.color
                     if (type == 0)
                         badType.isChecked = true
                     else goodType.isChecked = true
-                    position = currentHabitId
+                    uid = habit.uid
                 })
         }
 
         typeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            val checkedType: RadioButton = activity!!.findViewById(checkedId)
+            val checkedType: RadioButton = requireActivity().findViewById(checkedId)
             type = Integer.parseInt(checkedType.contentDescription.toString())
             Log.d(LOG_DEBUG, type.toString())
         }
@@ -87,7 +87,7 @@ class DataInputFragment : Fragment() {
         val diff = size + marginSize * 2
 
         colorPicker.setOnCheckedChangeListener { _, checkedId ->
-            val checked: RadioButton = activity!!.findViewById(checkedId)
+            val checked: RadioButton = requireActivity().findViewById(checkedId)
             color = Integer.parseInt(checked.contentDescription.toString())
         }
 
@@ -130,32 +130,36 @@ class DataInputFragment : Fragment() {
     }
 
     private fun packHabit(){
-        val currentName = enterName.text ?: ""
-        Log.d(LOG_DEBUG, enterName.text.toString())
-        val currentDesc = enterDescription.text ?: ""
-        var currentQuantity = enterQuantity.text.toString()
-        if (currentQuantity == ""){
-            currentQuantity = "0"
-        }
-        var currentPeriod = enterPeriod.text.toString()
-        if (currentPeriod == ""){
-            currentPeriod = "0"
-        }
-        val habit = Habit(
-            position,
-            currentName.toString(),
-            currentDesc.toString(),
-            color,
-            prioritiesSpinner.selectedItem as Int,
-            type,
-            Integer.parseInt(currentQuantity),
-            Integer.parseInt(currentPeriod))
+        val currentQuantity = enterQuantity.text.toString()
+        val currentPeriod = enterPeriod.text.toString()
+        val currentName = enterName.text.toString()
+        val currentDesc = enterDescription.text.toString()
+        if (allFieldsFilled(currentQuantity, currentPeriod, currentDesc, currentName)) {
+            val habit = Habit(
+                color,
+                Integer.parseInt(currentQuantity),
+                0,
+                currentDesc,
+                Integer.parseInt(currentPeriod),
+                prioritiesSpinner.selectedItem as Int,
+                currentName,
+                type,
+                uid
+            )
+            viewModel.postCurrentHabit(habit)
 
-        Log.d(LOG_DEBUG, habit.toString())
-        viewModel.postCurrentHabit(habit)
-
-        activity!!.supportFragmentManager.popBackStack()
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+        else {
+            val toast = Toast.makeText(context, "Please, fill all fields", Toast.LENGTH_SHORT)
+            toast.show()
+        }
     }
 
+    private fun allFieldsFilled(currentQuantity: String, currentPeriod: String,
+                                currentDesc: String, currentName: String):Boolean{
+        return currentQuantity != "" && currentPeriod != ""
+                && currentName != "" && currentDesc != ""
+    }
 
 }

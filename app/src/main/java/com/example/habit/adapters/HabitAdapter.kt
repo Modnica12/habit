@@ -42,10 +42,12 @@ class HabitAdapter(var habitsList: ArrayList<Habit>, private val typeFilterValue
         //в listView нам бы пришлось создавать inflater (аналог holder)
         val habit = filteredHabits[position]
 
+        val habitId = habit.uid
+
         holder.bind(habit)
         holder.itemView.setOnClickListener {
             val communicator = holder.itemView.context as Communicator
-            communicator.passDataInDataInputFragment(habit.habitId)
+            communicator.passDataInDataInputFragment(habitId)
         }
     }
 
@@ -61,8 +63,8 @@ class HabitViewHolder (view: View) : RecyclerView.ViewHolder(view) {
 
     @SuppressLint("SetTextI18n")
     fun bind(habit: Habit){
-        name.text = habit.habitName
-        times.text = habit.quantity.toString() + " раз в " + habit.period + " дней"
+        name.text = habit.title
+        times.text = habit.count.toString() + " раз в " + habit.frequency + " дней"
         priority.text = "приоритет: " + habit.priority
         description.text = habit.description
 

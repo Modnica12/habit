@@ -19,6 +19,7 @@ class HabitApp : Application() {
             AppDataBase::class.java,
             "habit-app-database")
             .allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
             .build()
     }
 

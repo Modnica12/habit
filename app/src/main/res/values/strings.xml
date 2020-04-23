@@ -13,4 +13,13 @@
     <string name="menu_home">Home</string>
     <string name="menu_about">About</string>
     <string name="sortBy">Отсортировать по</string>
+    <string name="description_input">Введите описание привычки:</string>
+    <string name="choose_priority">Выберите приоритет:</string>
+    <string name="choose_type">Выберете тип:</string>
+    <string name="good_type">Хорошая</string>
+    <string name="bad_type">Плохая</string>
+    <string name="count_of_times">Количество раз:</string>
+    <string name="frequency">Количество дней:</string>
+    <string name="title_input">Введите название привычки:</string>
+    <string name="sort_by">Отсортировать по</string>
 </resources>

@@ -1,5 +1,8 @@
 package com.example.habit.fragments
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +22,7 @@ import kotlinx.android.synthetic.main.habits_list_fragment.*
 
 
 const val LOG_DEBUG = "Debug"
+const val LOG_NETWORK = "Network"
 const val KEY_FOR_HABIT = "habit"
 const val KEY_FOR_SAVING_TYPE_FILTER = "typeFilter"
 const val PASS_TYPE = "typeFilter"
@@ -49,7 +53,7 @@ class HabitsListFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
 
         Log.d(LOG_DEBUG, "onCreateView")
-        viewModel = activity!!.let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}
+        viewModel = requireActivity().let { ViewModelProvider(it).get(HabitsListViewModel::class.java)}
 
 
         val args = arguments
@@ -76,7 +80,7 @@ class HabitsListFragment : Fragment() {
             adapter = habitAdapter
 
             //разделитель для элементов списка
-            val divider = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.habits_list_divider)
+            val divider = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.habits_list_divider)
             val dividerItemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
             dividerItemDecoration.setDrawable(divider!!)
             listOfHabits.addItemDecoration(dividerItemDecoration)
@@ -85,8 +89,9 @@ class HabitsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getHabitsFromServer()
 
-        val habitsLiveData = HabitApp.instance.getDataBase().habitsDao().getAllHabits()
+        val habitsLiveData = HabitsData.getAllHabits()
         habitsLiveData.observe(viewLifecycleOwner, Observer { habits ->
 
             //val dataBase = HabitApp.instance.getDataBase().habitsDao()

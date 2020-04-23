@@ -22,12 +22,16 @@ const val SORT_FROM_BIGGEST = 0
 const val SORT_FROM_SMALLEST = 1
 
 // все виды сортировки для спинера
+const val sortByDate = "дате добавления"
 const val sortByPriorities = "приоритетам"
 
-private val sortTypes = arrayOf(sortByPriorities)
+private val sortTypes = arrayOf(sortByDate, sortByPriorities)
 
 // отображение типа сортировки в enum
-private val mapForSort = mapOf(sortByPriorities to SortBy.PRIORITY)
+private val mapForSort = mapOf(
+    sortByPriorities to SortBy.PRIORITY,
+    sortByDate to SortBy.DATE
+    )
 
 class BottomSheetFragment : Fragment(){
 
@@ -46,7 +50,7 @@ class BottomSheetFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val spinnerAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, sortTypes)
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortTypes)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         sortSpinner.adapter = spinnerAdapter
     }
@@ -64,7 +68,7 @@ class BottomSheetFragment : Fragment(){
             dataInputFragment.enterTransition = Fade()
             dataInputFragment.exitTransition = Fade()
 
-            (activity!! as Communicator).startNewFragment(dataInputFragment)
+            (requireActivity() as Communicator).startNewFragment(dataInputFragment)
         }
 
         // обрабатываем ввод в поле для поиска
@@ -108,5 +112,6 @@ class BottomSheetFragment : Fragment(){
 }
 
 enum class SortBy {
-    PRIORITY
+    PRIORITY,
+    DATE
 }
