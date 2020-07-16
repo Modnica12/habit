@@ -34,5 +34,6 @@
 
     <string name="frequency_text">%d раз в %d дней</string>
     <string name="priority_text">Приоритет: %d</string>
+    <string name="search_text">Поиск</string>
 
 </resources>

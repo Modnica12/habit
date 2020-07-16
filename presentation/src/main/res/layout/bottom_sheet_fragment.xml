@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:behavior_hideable="false"
-    android:background="@color/background"
-    app:behavior_peekHeight="20dp"
+    android:background="@color/white"
+    app:behavior_peekHeight="48dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <EditText
@@ -26,9 +26,21 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/sort_by"
+        android:text="@string/search_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/search_text"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp">
+    </TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/sort_by"
+        app:layout_constraintStart_toStartOf="@id/search_text"
+        app:layout_constraintTop_toBottomOf="@id/search_text"
         android:id="@+id/sortText"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"

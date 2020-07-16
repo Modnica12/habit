@@ -12,4 +12,5 @@
     <color name="colorPickerMagenta">#FF00FF</color>
     <color name="background">#DCDCDC</color>
     <color name="searchBackground">#A5A5A5</color>
+    <color name="white">#FFFFFF</color>
 </resources>
