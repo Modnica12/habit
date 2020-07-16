@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         navigationController = Navigation.findNavController(this, R.id.nav_host_fragment_container)
-        navigationController.navigate(R.id.listAndPagerFragment)
 
         Glide.with(this)
             .load("https://i.pinimg.com/originals/0c/a9/e2/0ca9e28dcb12dc698cfd2beda6d6fa64.jpg")

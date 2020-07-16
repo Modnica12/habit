@@ -75,7 +75,7 @@ class DataInputFragment : Fragment() {
         }
 
         viewModel.isReady.observe(viewLifecycleOwner, Observer {
-            Navigation.findNavController(requireActivity() as Activity, R.id.nav_host_fragment_container).popBackStack()
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_container).popBackStack()
         })
 
         setColors(48, 16)
