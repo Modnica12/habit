@@ -13,12 +13,7 @@ class SaveHabitsFromServerUseCase(
 ){
     suspend fun saveHabitsFromServer(){
         withContext(dispatcher){
-            Log.d("debug", "SERVER GET")
             val habits = repository.serverGetHabits()
-
-            val localHabits = repository.getAllHabits().first()
-            repository.deleteHabits(localHabits)
-
             repository.updateListOfHabits(habits)
         }
     }

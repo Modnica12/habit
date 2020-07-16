@@ -66,6 +66,8 @@ class BottomSheetFragment : BottomSheetDialogFragment(){
 
         viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(HabitsListViewModel::class.java)
 
+        viewModel.setStringForFilter("")
+
         searchByName.addTextChangedListener { input ->
             Log.d(LOG_DEBUG, "INPUT $input")
             viewModel.setStringForFilter(input.toString())

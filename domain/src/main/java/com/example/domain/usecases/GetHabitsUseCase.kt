@@ -12,5 +12,5 @@ class GetHabitsUseCase(
     private val dispatcher: CoroutineDispatcher
 ) {
     @ExperimentalCoroutinesApi
-    fun getHabitsDB(): Flow<List<Habit>> = repository.getAllHabits().flowOn(dispatcher)
+    fun getHabits(): Flow<List<Habit>> = repository.getAllHabits().flowOn(dispatcher)
 }

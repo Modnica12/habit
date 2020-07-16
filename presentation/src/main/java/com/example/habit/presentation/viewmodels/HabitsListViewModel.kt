@@ -39,7 +39,6 @@ class HabitsListViewModel @Inject constructor(
         get() = Dispatchers.Main + job + CoroutineExceptionHandler { _, throwable -> throw throwable }
 
     init {
-        setStringForFilter("")
         viewModelScope.launch(Dispatchers.IO) {
             saveHabitsFromServerUseCase.saveHabitsFromServer()
         }
@@ -61,7 +60,7 @@ class HabitsListViewModel @Inject constructor(
 
     @ExperimentalCoroutinesApi
     fun getAllHabits(): LiveData<List<Habit>>{
-        return getHabitsUseCase.getHabitsDB().asLiveData()
+        return getHabitsUseCase.getHabits().asLiveData()
     }
 
     fun doneHabit(habit: Habit): DoneHabitToastType{

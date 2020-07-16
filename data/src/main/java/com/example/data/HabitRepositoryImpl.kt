@@ -20,13 +20,9 @@ class HabitRepositoryImpl(private val dataBase: HabitsDao, private val retrofit:
         dataBase.addHabit(habit)
     }
 
-    override fun getAllHabits(): Flow<List<Habit>> {
-        return dataBase.getAllHabits()
-    }
+    override fun getAllHabits() = dataBase.getAllHabits()
 
-    override fun getBy(uid: String): Flow<Habit> {
-        return dataBase.getBy(uid)
-    }
+    override fun getBy(uid: String) = dataBase.getBy(uid)
 
     override suspend fun deleteHabit(habit: Habit) {
         dataBase.deleteHabit(habit)
@@ -44,20 +40,11 @@ class HabitRepositoryImpl(private val dataBase: HabitsDao, private val retrofit:
         dataBase.addHabits(habits)
     }
 
-    override suspend fun serverGetHabits(): List<Habit> {
-        val habits = retrofit.getListOfHabits()
-        Log.d(LOG_NETWORK, "SERVER GET: $habits")
-        return habits
-    }
+    override suspend fun serverGetHabits() = retrofit.getListOfHabits()
 
-    override suspend fun serverPutHabit(habit: Habit): String {
-        val uid = retrofit.updateHabit(habit).uid
-        Log.d(LOG_NETWORK, "SERVER PUT: $uid")
-        return uid
-    }
+    override suspend fun serverPutHabit(habit: Habit) = retrofit.updateHabit(habit).uid
 
     override suspend fun doneHabit(habitDone: HabitDone) {
-        Log.d(LOG_DEBUG, "DONE $habitDone")
         retrofit.doneHabit(habitDone)
     }
 }

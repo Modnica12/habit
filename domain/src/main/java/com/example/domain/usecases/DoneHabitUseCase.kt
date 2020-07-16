@@ -18,8 +18,6 @@ class DoneHabitUseCase(private val repository: HabitRepository,
             dates.addAll(habit.done_dates)
             dates.add(date)
             habit.done_dates = dates
-            Log.d("debug", "DATES $dates")
-            Log.d("debug", "In Habit Dates ${habit.done_dates}")
             repository.doneHabit(HabitDone(date, habit.uid))
             repository.updateHabit(habit)
         }
