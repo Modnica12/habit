@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    android:background="@color/background"
+    app:behavior_peekHeight="20dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/sortSpinner"
+        app:layout_constraintTop_toBottomOf="@id/sortSpinner"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:id="@+id/searchByName"
+        android:background="@color/searchBackground"
+        android:inputType="textCapSentences"
+        android:hint="@string/find"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/sort_by"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/sortText"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp">
+    </TextView>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="@id/sortText"
+        app:layout_constraintTop_toBottomOf="@id/sortText"
+        android:id="@+id/sortSpinner"
+        android:layout_marginEnd="16dp">
+    </Spinner>
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/buttonFromBiggest"
+        app:layout_constraintStart_toEndOf="@+id/sortSpinner"
+        app:layout_constraintTop_toTopOf="@id/sortSpinner"
+        app:layout_constraintBottom_toBottomOf="@id/sortSpinner"
+        android:foreground="@drawable/sort_from_biggest"
+        android:backgroundTint="@color/background">
+    </Button>
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/buttonFromSmallest"
+        app:layout_constraintStart_toEndOf="@+id/buttonFromBiggest"
+        app:layout_constraintTop_toTopOf="@id/buttonFromBiggest"
+        app:layout_constraintBottom_toBottomOf="@id/buttonFromBiggest"
+        android:foreground="@drawable/sort_from_smallest"
+        android:backgroundTint="@color/background">
+    </Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

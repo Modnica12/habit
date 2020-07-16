@@ -1,2 +1,4 @@
 rootProject.name='habbb'
-include ':app'
+include ':presentation'
+include ':data'
+include ':domain'
